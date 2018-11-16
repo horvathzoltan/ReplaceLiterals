@@ -6,7 +6,7 @@
 #if defined(Q_OS_LINUX)
 #define getLocInfo zLocInfo(static_cast<const char*>(__PRETTY_FUNCTION__),__FILE__,__LINE__)
 #elif defined(Q_OS_WIN)
-#define getLocInfo zLocInfo(__FUNCSIG__ ,__FILE__,__LINE__)
+#define getLocInfo zLocInfo(__PRETTY_FUNCTION__ ,__FILE__,__LINE__)
 #endif
 
 

@@ -251,7 +251,7 @@ QString zLog::zStackTrace()
 QString zLog::zStackTrace(){
     QStringList e;
 
-    unsigned int max_frames = 64;
+   // unsigned int max_frames = 64;
 
     e << QStringLiteral("stack trace:");
 
@@ -374,11 +374,8 @@ void zLog::trace2(const zLocInfo& locinfo){
     }
     auto msg2 = logToString(TRACE, nullptr, li, nullptr);
 #ifdef QT_DEBUG
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "cppcoreguidelines-pro-bounds-array-to-pointer-decay"
    //qDebug().noquote() << msg2;
     QMessageLogger(QT_MESSAGELOG_FILE, QT_MESSAGELOG_LINE, static_cast<const char*>(__PRETTY_FUNCTION__)).debug().noquote()<<msg2;
-   #pragma GCC diagnostic pop
 #endif
     }
 

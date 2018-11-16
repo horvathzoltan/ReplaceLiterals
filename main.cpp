@@ -1,35 +1,40 @@
+#include "globals.h"
+#include "ztextfilehelper.h"
 #include <QCoreApplication>
+#include <QTextCodec>
 #include <zlog.h>
+#include "replaceliteral.h"
+#include<cstdio>
+#include<windows.h>
 
 int main(int argc, char *argv[])
 {
     //QCoreApplication a(argc, argv);
 
-    //qDebug() << "Hello World";
+        //qDebug() << "Hello World";
+    //SetConsoleOutputCP(CP_UTF8);
+    //QTextCodec::setCodecForLocale(QTextCodec::codecForName("CP_UTF8"));
+    //SetConsoleCP(1252);
 
-    zInfo(QStringLiteral("debug teszt"));
+    ///TODO setlocale
+    /// meg kell tudni a rendszer lokalizációt
+    /// kell egy text codec a zlogban
+    /// mindent ami a konzolra megy, azzal a codeccel kell kirakni
+    ///
+    /// QTextCodec *codec = QTextCodec::codecForName("UTF-8");
+    ///QTextCodec::setCodecForCStrings(codec);
+    ///qDebug() << "ÑABCgÓ";
+    /// https://www.google.hu/search?q=qdebug+locale&oq=qdebug+locale&aqs=chrome..69i57.4423j0j4&sourceid=chrome&ie=UTF-8
+    setlocale(LC_ALL, "Hungarian");
+    //SetConsoleOutputCP(1252);
+
+    //zInfo(QStringLiteral("debug teszt"));
     //auto a = zLocInfo(static_cast<const char*>(__PRETTY_FUNCTION__),__FILE__,__LINE__);
     //zTrace();
-
-    //TODO paraméterben kap egy lang fájlt és egy txt
-    /// ha létezik beolvassa listába
-    /// ha nem üres és első karakter nem #
-    /// 1. kulcs
-    /// 2. érték
-    /// 3. ha van # visszafele
-    /// akkor az a fordítás
-    /// //ezt fordítva kellene,
-    /// 1. kulcs
-    /// 2. fordítás
-    /// ha van # akkor
-    /// 3. eredeti
-    /// ezzel csinál két egy mapot - egy erdedetit
-    /// majd veszi a txt
-    /// végigmegy a mapon
-    /// és egyenként ahol a value szerepel, cseréli a keyre
-    /// majd kiírja a fájlt
-    return 1;//a.exec();
+    int e = ReplaceLiteral::replace();
+    return e;//a.exec();
 }
+
 
 
 

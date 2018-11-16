@@ -19,7 +19,8 @@ SOURCES += \
     ztextfilehelper.cpp \
     zlog.cpp \
     zlocinfo.cpp \
-    zstringhelper.cpp
+    zstringhelper.cpp \
+    replaceliteral.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -31,4 +32,5 @@ HEADERS += \
     zlog.h \
     globals.h \
     zlocinfo.h \
-    zstringhelper.h
+    zstringhelper.h \
+    replaceliteral.h
