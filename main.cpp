@@ -5,7 +5,9 @@
 #include <zlog.h>
 #include "replaceliteral.h"
 #include<cstdio>
+#ifdef Q_OS_WIN
 #include<windows.h>
+#endif
 
 int main(int argc, char *argv[])
 {

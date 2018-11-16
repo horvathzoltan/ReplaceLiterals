@@ -2,6 +2,9 @@
 #include "replaceliteral.h"
 #include "ztextfilehelper.h"
 
+#include <QDir>
+#include <QFileInfo>
+
 ReplaceLiteral::ReplaceLiteral() = default;
 
 
@@ -23,10 +26,30 @@ ReplaceLiteral::ReplaceLiteral() = default;
 /// és egyenként ahol a value szerepel, cseréli a keyre
 /// majd kiírja a fájlt
 ///
+///
+/// impozáns lenne, ha a language fájlban benne lenne a source relatív pojectdir-el
+/// így ha a másolatot fordítjuk, mozgatjuk, akkor is tud cserélni
+///
+/// amikor a mapot generáljuk,
+/// feldolgozás során jön -e be path, aminek a vége classname.cs?
+/// ha igen, megvan a forrás
+/// márpedig, ha LogService hívás van, fog bejönni, az opcionális paraméter miatt
+/// amit a fordító kvázi literálisként fordít be
+///
+/// a cserélő kiolvassa a path-t, hozzáteszi a projectdirt,
+/// készít egy másolatot a fájlból - fájlnévben időbélyeggel
+/// majd cserél
+///
+/// tehát meg kell adni a project dirt, a backup dirt, és a nyelvi fájlt
+
 int ReplaceLiteral::replace(){
+#ifdef Q_OS_WIN
     QString lFileName = QStringLiteral(R"(C:\mestercipo\Messages\Messages_USERSERVICE_hu-HU.csv)");
     QString sFileName = QStringLiteral(R"(C:\mestercipo\UserService.cs)");
-
+#elif defined(Q_OS_LINUX)
+    QString lFileName = QStringLiteral(R"(/home/zoli/mestercipo/mestercipo/Messages/Messages_USERSERVICE_hu-HU.csv)");
+    QString sFileName = QStringLiteral(R"(/home/zoli/mestercipo/mestercipo/UserService.cs)");
+#endif
     auto map = loadmap(lFileName);
     if(map.isEmpty()) return 1;
     zInfo(QStringLiteral("%1 definitions loaded").arg(map.count()));
@@ -97,5 +120,8 @@ int ReplaceLiteral::doReplace(const QString& sFileName, const QMap<QString,QStri
         s.replace("\""+m.value()+"\"", "tr(tre."+m.key()+")");
     }
 
-    zTextFileHelper::save(s, sFileName+"x");
+    QFileInfo fi(sFileName);
+
+    QString ns = QFileInfo(fi.dir(), fi.baseName()+"_x."+fi.completeSuffix()).filePath();
+    zTextFileHelper::save(s, ns);
 }
