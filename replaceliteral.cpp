@@ -67,7 +67,7 @@ QMap<QString,QString> ReplaceLiteral::loadmap(QString mapFileName)
                 if (ix1 > 0)
                 {
                     // de mivel nekünk az original kell és az a # után van,
-                    v = v.mid(ix1);
+                    v = v.mid(ix1+1);
                 }
                 if (!k.contains(' '))
                 {
