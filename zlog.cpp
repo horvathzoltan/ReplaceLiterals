@@ -147,7 +147,7 @@ QString zLog::logToString(int errlevel, const QString &msg, const QString &loci,
         msg3= level+": "+msg+"\n"+loci;
         break;
     case INFO:
-        msg3= level+": "+msg;
+        msg3= msg;
         break;
     default:
         break;

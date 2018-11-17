@@ -1,6 +1,7 @@
 #include "globals.h"
 #include "replaceliteral.h"
 #include "ztextfilehelper.h"
+#include "zfilenamehelper.h"
 
 #include <QDir>
 #include <QFileInfo>
@@ -42,23 +43,30 @@ ReplaceLiteral::ReplaceLiteral() = default;
 ///
 /// tehát meg kell adni a project dirt, a backup dirt, és a nyelvi fájlt
 
-int ReplaceLiteral::replace(){
-#ifdef Q_OS_WIN
-    QString lFileName = QStringLiteral(R"(C:\mestercipo\Messages\Messages_USERSERVICE_hu-HU.csv)");
-    QString sFileName = QStringLiteral(R"(C:\mestercipo\UserService.cs)");
-#elif defined(Q_OS_LINUX)
-    QString lFileName = QStringLiteral(R"(/home/zoli/mestercipo/mestercipo/Messages/Messages_USERSERVICE_hu-HU.csv)");
-    QString sFileName = QStringLiteral(R"(/home/zoli/mestercipo/mestercipo/UserService.cs)");
-#endif
+int ReplaceLiteral::replace(const QString& lFileName, const QString& sFileName){
+
+    if(lFileName.isEmpty())
+    {
+        zInfo(QStringLiteral("no message filename"));
+        return 0;
+    }
+
+    if(sFileName.isEmpty())
+    {
+        zInfo(QStringLiteral("no source filename"));
+        return 0;
+    }
+
+    //QString lFileName = getMessageFileName(lFilePath, sFileName);//Messages_USERSERVICE_hu-HU.csv
+
     auto map = loadmap(lFileName);
     if(map.isEmpty()) return 1;
     zInfo(QStringLiteral("%1 definitions loaded").arg(map.count()));
 
     int e = doReplace(sFileName, map);
 
-    zInfo(QStringLiteral("%1 definitions replaced").arg(e));
 
-    return 0;
+    return e;
 }
 
 
@@ -69,7 +77,7 @@ QMap<QString,QString> ReplaceLiteral::loadmap(QString mapFileName)
     QMap<QString,QString> map;
     if(maplines.isEmpty())
     {
-        zInfo(QStringLiteral("nem lettek sorok beolvasva"));
+        zInfo(QStringLiteral("no loaded messages"));
         map;
     }
 
@@ -106,22 +114,46 @@ int ReplaceLiteral::doReplace(const QString& sFileName, const QMap<QString,QStri
 {
     if(map.isEmpty())
     {
-        zInfo(QStringLiteral("empty map"));
+        zInfo(QStringLiteral("empty message map"));
         return 0;
     }
     auto s = zTextFileHelper::load(sFileName);
     if(s.isEmpty())
     {
-        zInfo(QStringLiteral("empty source"));
+        zInfo(QStringLiteral("empty source text"));
         return 0;
     }
+
+    int e = 0;
     zforeach(m, map)
     {
+        e++;
         s.replace("\""+m.value()+"\"", "tr(tre."+m.key()+")");
     }
 
+    //QFileInfo fi(sFileName);
+    //QFileInfo(fi.dir(), fi.baseName()+"_x."+fi.completeSuffix()).filePath();
+
+    //QString ns = zFileNameHelper::appendToBaseName(sFileName, QStringLiteral("x"));
+    zTextFileHelper::save(s, sFileName);
+    return e;
+}
+
+/*
+QString lFilePath = QStringLiteral(R"(/home/zoli/mestercipo/mestercipo/Messages)");
+QString sFileName = QStringLiteral(R"(/home/zoli/mestercipo/mestercipo/UserService.cs)");
+*/
+QString ReplaceLiteral::getMessageFileName(const QString& lFilePath, const QString& sFileName)
+{
+    //Messages_USERSERVICE_hu-HU.csv
+
     QFileInfo fi(sFileName);
 
-    QString ns = QFileInfo(fi.dir(), fi.baseName()+"_x."+fi.completeSuffix()).filePath();
-    zTextFileHelper::save(s, ns);
+    //auto fn = fi.baseName().toUpper();
+
+    QFileInfo fs(lFilePath);
+
+    QString ns = QFileInfo(fs.filePath(), "Messages_"+fi.baseName().toUpper()+"_hu-HU.csv").filePath();
+    zInfo(QStringLiteral("filename: %1").arg(ns));
+    return ns;
 }

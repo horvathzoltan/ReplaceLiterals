@@ -10,6 +10,7 @@ public:
     static QStringList loadLines(const QString& filename);
     static void save(const QString& txt, const QString& fileName, bool isAppend = false);
     //static void append(QString line, QString fileName);
+    static bool backup(const QString& filename);
 };
 
 

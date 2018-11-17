@@ -5,19 +5,19 @@
 #include <QFileInfo>
 #include <QTextCodec>
 #include <QTextStream>
-
+#include "zfilenamehelper.h"
 
 QString zTextFileHelper::load(const QString& filename) {
     QFileInfo fi(filename);
     if(!fi.isAbsolute())
     {
-        zInfo(QStringLiteral("nem abszolut path: %1").arg(filename));
+        zInfo(QStringLiteral("path is not absolute: %1").arg(filename));
         return zStringHelper::Empty;
     }
 
     if(!fi.exists())
     {
-        zInfo(QStringLiteral("a fájl nem létezik: %1").arg(filename));
+        zInfo(QStringLiteral("file not exist: %1").arg(filename));
         return zStringHelper::Empty;
     }
 
@@ -28,13 +28,13 @@ QString zTextFileHelper::load(const QString& filename) {
     // egyébként megnyitható azaz
 
     if (f.open(QFile::ReadOnly | QFile::Text))  {
-        zInfo(QStringLiteral("Beolvasva: %1").arg(filename));
+        zInfo(QStringLiteral("loaded: %1").arg(filename));
         QTextStream st(&f);
         st.setCodec("UTF-8");
         e = st.readAll();
     }
     else{
-        zInfo(QStringLiteral("A fájl nem nyitható meg: %1 ERROR").arg(filename));
+        zInfo(QStringLiteral("cannot open file: %1 ERROR").arg(filename));
         e= zStringHelper::Empty;
     }
     return e;
@@ -44,13 +44,13 @@ QStringList zTextFileHelper::loadLines(const QString& filename) {
     QFileInfo fi(filename);
     if(!fi.isAbsolute())
     {
-        zInfo(QStringLiteral("nem abszolut path: %1").arg(filename));
+        zInfo(QStringLiteral("pat is not absolute: %1").arg(filename));
         return zStringHelper::EmptyList;
     }
 
     if(!fi.exists())
     {
-        zInfo(QStringLiteral("a fájl nem létezik: %1").arg(filename));
+        zInfo(QStringLiteral("file not exist: %1").arg(filename));
         return zStringHelper::EmptyList;
     }
 
@@ -61,7 +61,7 @@ QStringList zTextFileHelper::loadLines(const QString& filename) {
     // egyébként megnyitható azaz
 
     if (f.open(QFile::ReadOnly | QFile::Text))  {
-        zInfo(QStringLiteral("Beolvasva: %1").arg(filename));
+        zInfo(QStringLiteral("loaded: %1").arg(filename));
         QTextStream st(&f);
         st.setCodec("UTF-8");
 
@@ -73,7 +73,7 @@ QStringList zTextFileHelper::loadLines(const QString& filename) {
 
     }
     else{
-        zInfo(QStringLiteral("A fájl nem nyitható meg: %1 ERROR").arg(filename));
+        zInfo(QStringLiteral("cannot open file: %1 ERROR").arg(filename));
         e= zStringHelper::EmptyList;
     }
     return e;
@@ -93,7 +93,7 @@ void zTextFileHelper::save(const QString& txt, const QString& fn, bool isAppend)
     if(isAppend) om |= QIODevice::Append;
 
     if (!f.open(om)){
-        zError(QStringLiteral("nem menthető: ")+fn);
+        zError(QStringLiteral("cannot open file to write or append: ")+fn);
         //zLog::dialogError("nem menthető: "+fn);
         return;
         }
@@ -106,5 +106,13 @@ void zTextFileHelper::save(const QString& txt, const QString& fn, bool isAppend)
     //out.setGenerateByteOrderMark(true);
     out << txt;//.toUtf8();
     f.close();
+}
+
+bool zTextFileHelper::backup(const QString& filename)
+{
+    QFile infile(filename);
+    QString outfilename = zFileNameHelper::appendToBaseName(filename, QStringLiteral("old"));
+
+    return QFile::copy(filename, outfilename);
 }
 

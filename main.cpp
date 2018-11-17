@@ -4,6 +4,7 @@
 #include <QTextCodec>
 #include <zlog.h>
 #include "replaceliteral.h"
+#include <QCommandLineParser>
 #include<cstdio>
 #ifdef Q_OS_WIN
 #include<windows.h>
@@ -11,30 +12,59 @@
 
 int main(int argc, char *argv[])
 {
-    //QCoreApplication a(argc, argv);
+    QCoreApplication app(argc, argv);
 
-        //qDebug() << "Hello World";
-    //SetConsoleOutputCP(CP_UTF8);
-    //QTextCodec::setCodecForLocale(QTextCodec::codecForName("CP_UTF8"));
-    //SetConsoleCP(1252);
+    QCommandLineParser parser;
+    QCoreApplication::setApplicationName(QStringLiteral("ReplaceLiteral"));
+    parser.setApplicationDescription(QStringLiteral("Replace Literals by localized message file contains translated messages and its keys in csv format."));
+    parser.addHelpOption();
+    parser.addVersionOption();
 
-    ///TODO setlocale
-    /// meg kell tudni a rendszer lokalizációt
-    /// kell egy text codec a zlogban
-    /// mindent ami a konzolra megy, azzal a codeccel kell kirakni
-    ///
-    /// QTextCodec *codec = QTextCodec::codecForName("UTF-8");
-    ///QTextCodec::setCodecForCStrings(codec);
-    ///qDebug() << "ÑABCgÓ";
-    /// https://www.google.hu/search?q=qdebug+locale&oq=qdebug+locale&aqs=chrome..69i57.4423j0j4&sourceid=chrome&ie=UTF-8
-    setlocale(LC_ALL, "Hungarian");
-    //SetConsoleOutputCP(1252);
+    QCommandLineOption m_opt(
+                QStringList {"m" , "message"},
+                QStringLiteral("translated messages"),
+                QStringLiteral("messages")
+                );
+    parser.addOption(m_opt);
 
-    //zInfo(QStringLiteral("debug teszt"));
-    //auto a = zLocInfo(static_cast<const char*>(__PRETTY_FUNCTION__),__FILE__,__LINE__);
-    //zTrace();
-    int e = ReplaceLiteral::replace();
-    return e;//a.exec();
+    QCommandLineOption s_opt(
+                QStringList {"s", "source"},
+                QStringLiteral("source file"),
+                QStringLiteral("source")
+                );
+
+    parser.addOption(s_opt);
+
+    //parser.addPositionalArgument("m", QStringLiteral("translated messages"));
+    parser.addPositionalArgument("b", QStringLiteral("backup file"));
+
+    /*QCommandLineOption b_opt(
+                QStringList {"b", "backup"},
+                QStringLiteral("backup file"),
+                QStringLiteral("backup")
+                );
+
+    parser.addOption(b_opt);*/
+
+    parser.process(app);
+
+    QString lFileName = parser.value(m_opt);
+    QString sFileName = parser.value(s_opt);
+    bool isBackup = parser.isSet(QStringLiteral("b"));
+
+    if(isBackup)
+    {
+        if(zTextFileHelper::backup(sFileName))
+        {
+            zInfo(QStringLiteral("backup fiole copied"));
+        }
+    }
+
+    int e = ReplaceLiteral::replace(lFileName, sFileName);
+
+    zInfo(QStringLiteral("%1 definitions replaced").arg(e));
+
+    return (e>0)?0:1;//app.exec();
 }
 
 
