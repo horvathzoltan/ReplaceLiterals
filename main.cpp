@@ -35,28 +35,23 @@ int main(int argc, char *argv[])
 
     parser.addOption(s_opt);
 
-    //parser.addPositionalArgument("m", QStringLiteral("translated messages"));
-    parser.addPositionalArgument("b", QStringLiteral("backup file"));
+    QCommandLineOption b_opt(
+                QStringLiteral("backup"),
+                QStringLiteral("backup file"));
 
-    /*QCommandLineOption b_opt(
-                QStringList {"b", "backup"},
-                QStringLiteral("backup file"),
-                QStringLiteral("backup")
-                );
-
-    parser.addOption(b_opt);*/
+    parser.addOption(b_opt);
 
     parser.process(app);
 
     QString lFileName = parser.value(m_opt);
     QString sFileName = parser.value(s_opt);
-    bool isBackup = parser.isSet(QStringLiteral("b"));
+    bool isBackup= parser.isSet(b_opt);
 
     if(isBackup)
     {
         if(zTextFileHelper::backup(sFileName))
         {
-            zInfo(QStringLiteral("backup fiole copied"));
+            zInfo(QStringLiteral("backup file copied"));
         }
     }
 

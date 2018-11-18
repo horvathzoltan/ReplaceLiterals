@@ -2,6 +2,7 @@
 #include "zstringhelper.h"
 #include "ztextfilehelper.h"
 
+#include <QDateTime>
 #include <QFileInfo>
 #include <QTextCodec>
 #include <QTextStream>
@@ -111,7 +112,9 @@ void zTextFileHelper::save(const QString& txt, const QString& fn, bool isAppend)
 bool zTextFileHelper::backup(const QString& filename)
 {
     QFile infile(filename);
-    QString outfilename = zFileNameHelper::appendToBaseName(filename, QStringLiteral("old"));
+    QString now = QDateTime::currentDateTime().toString("yyyyMMdd_hh:mm:ss");
+
+    QString outfilename = zFileNameHelper::appendToBaseName(filename, now);
 
     return QFile::copy(filename, outfilename);
 }
