@@ -330,6 +330,9 @@ void zLog::info2(const QString& msg)
     //auto a = static_cast<const char*>(__PRETTY_FUNCTION__);
     QMessageLogger(QT_MESSAGELOG_FILE, QT_MESSAGELOG_LINE, static_cast<const char*>(__PRETTY_FUNCTION__)).info().noquote()<<msg2;
     //qInfo().noquote();// << "a";//msg2;
+#else
+        QTextStream out(stdout);
+        out << msg2<<endl;
 #endif
 }
 
@@ -345,6 +348,9 @@ void zLog::info2(const QStringList& msgl)
 #ifdef QT_DEBUG
         QMessageLogger(QT_MESSAGELOG_FILE, QT_MESSAGELOG_LINE, static_cast<const char*>(__PRETTY_FUNCTION__)).info().noquote()<<msg2;
         //qInfo();//.noquote() << msg2;
+#else
+        QTextStream out(stdout);
+        out << msg2<<   endl;
 #endif
     }
 }

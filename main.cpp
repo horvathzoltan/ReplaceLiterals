@@ -12,7 +12,10 @@
 
 int main(int argc, char *argv[])
 {
+    zInfo("started");
+
     QCoreApplication app(argc, argv);
+
 
     QCommandLineParser parser;
     QCoreApplication::setApplicationName(QStringLiteral("ReplaceLiteral"));
@@ -58,6 +61,8 @@ int main(int argc, char *argv[])
     int e = ReplaceLiteral::replace(lFileName, sFileName);
 
     zInfo(QStringLiteral("%1 definitions replaced").arg(e));
+
+    system("pause");
 
     return (e>0)?0:1;//app.exec();
 }
