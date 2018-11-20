@@ -127,8 +127,11 @@ int ReplaceLiteral::doReplace(const QString& sFileName, const QMap<QString,QStri
     int e = 0;
     zforeach(m, map)
     {
-        e++;
-        s.replace("\""+m.value()+"\"", "tr(tre."+m.key()+")");
+        QString ezt = "\""+m.value()+"\"";
+        QString erre = "tr(tre."+m.key()+")";
+        int i = s.count(ezt);
+        s.replace(ezt, erre);
+        e += i-s.count(ezt);
     }
 
     //QFileInfo fi(sFileName);
