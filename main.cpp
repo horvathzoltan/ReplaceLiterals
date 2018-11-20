@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 
     int e = ReplaceLiteral::replace(lFileName, sFileName);
 
-    zInfo(QStringLiteral("%1 definitions replaced").arg(e));
+
 
     system("pause");
 

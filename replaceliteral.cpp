@@ -60,11 +60,12 @@ int ReplaceLiteral::replace(const QString& lFileName, const QString& sFileName){
     //QString lFileName = getMessageFileName(lFilePath, sFileName);//Messages_USERSERVICE_hu-HU.csv
 
     auto map = loadmap(lFileName);
-    if(map.isEmpty()) return 1;
+    if(map.isEmpty()) return 0;
     zInfo(QStringLiteral("%1 definitions loaded").arg(map.count()));
 
     int e = doReplace(sFileName, map);
 
+    zInfo(QStringLiteral("%1 definitions replaced").arg(e));
 
     return e;
 }
@@ -129,9 +130,9 @@ int ReplaceLiteral::doReplace(const QString& sFileName, const QMap<QString,QStri
     {
         QString ezt = "\""+m.value()+"\"";
         QString erre = "tr(tre."+m.key()+")";
-        int i = s.count(ezt);
+        int i = s.count(ezt);//5 , 3 csere, marad 2
         s.replace(ezt, erre);
-        e += i-s.count(ezt);
+        e += i-s.count(ezt);//5-2
     }
 
     //QFileInfo fi(sFileName);
